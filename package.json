@@ -1,0 +1,23 @@
+{
+  "name": "proxy-server-zeptomail",
+  "version": "1.0.0",
+  "description": "Lightweight, stateless Node.js + Express proxy server for Zoho ZeptoMail API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "zeptomail",
+    "proxy",
+    "express",
+    "stateless"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
