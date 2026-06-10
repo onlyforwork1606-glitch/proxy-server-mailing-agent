@@ -61,6 +61,19 @@ let webhookStats = {
 let webhookEmails = [];
 let webhookBounces = new Set();
 
+// Helper to combine in-memory webhook stats with seeds (from environment variables)
+function getCombinedStats() {
+  return {
+    total: webhookStats.total + parseInt(process.env.SEED_TOTAL || '0', 10),
+    delivered: webhookStats.delivered + parseInt(process.env.SEED_DELIVERED || '0', 10),
+    opens: webhookStats.opens + parseInt(process.env.SEED_OPENS || '0', 10),
+    clicks: webhookStats.clicks + parseInt(process.env.SEED_CLICKS || '0', 10),
+    soft_bounces: webhookStats.soft_bounces + parseInt(process.env.SEED_SOFT_BOUNCES || '0', 10),
+    hard_bounces: webhookStats.hard_bounces + parseInt(process.env.SEED_HARD_BOUNCES || '0', 10),
+    feedback_loops: webhookStats.feedback_loops + parseInt(process.env.SEED_FEEDBACK_LOOPS || '0', 10)
+  };
+}
+
 // Load cached webhook events if file exists
 if (fs.existsSync(DATA_FILE)) {
   try {
@@ -222,7 +235,7 @@ app.get('/api/zepto/stats', async (req, res, next) => {
       data = await response.json();
     } catch (fetchErr) {
       console.warn('ZeptoMail API stats fetch failed, falling back to in-memory webhook stats:', fetchErr.message);
-      return res.json({ data: webhookStats });
+      return res.json({ data: getCombinedStats() });
     }
 
     if (!response.ok) {
@@ -231,7 +244,7 @@ app.get('/api/zepto/stats', async (req, res, next) => {
       
       if (isAuthError) {
         console.warn(`ZeptoMail API returned ${response.status} (${errMsg}). Falling back to in-memory webhook stats.`);
-        return res.json({ data: webhookStats });
+        return res.json({ data: getCombinedStats() });
       }
       return res.status(response.status).json(data);
     }
