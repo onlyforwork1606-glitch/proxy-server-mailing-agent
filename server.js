@@ -204,6 +204,15 @@ app.get('/api/zepto/bounces', async (req, res, next) => {
   }
 });
 
+// Parse JSON bodies (needed for webhook POST route)
+app.use(express.json());
+
+// Webhook receiver for ZeptoMail events
+app.post('/webhooks/zepto', (req, res) => {
+  // Always return 200 immediately — no storage
+  res.status(200).json({ status: 'ok' });
+});
+
 // Error handling middleware: forwards original status code and returns { error }
 app.use((err, req, res, next) => {
   console.error('Proxy server encountered error:', err.message || err);
